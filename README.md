@@ -34,6 +34,10 @@ Test Driven Development is an approach to software developing where programmers 
 
 3. Mention three types of automated tests.
 
+1) Unit tests
+2) Snapshot tests
+3) Integration tests
+
 ## Project Set Up
 
 - [ ] fork and clone this repository.
