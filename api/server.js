@@ -23,8 +23,38 @@ server.post('/games', async (req, res) => {
       const game = await Games.insert(req.body);
       res.status(201).json(game);
     } catch (error) {
-      res.status(500).json(error);
+      if (error.code === 'SQLITE_CONSTRAINT') {
+        res.status(405).end();
+      } else {
+        res.status(500).json(error);
+      }
     }
+});
+
+server.get('/games/:id', async (req, res) => {
+  try {
+    const game = await Games.findById(req.params.id);
+    if (game === undefined) {
+      res.status(404).end();
+    } else {
+      res.status(200).json(game);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+server.delete('/games/:id', async (req, res) => {
+  try {
+    const game = await Games.remove(req.params.id);
+    if (!game) {
+      res.status(404).end();
+    } else {
+      res.status(204).end();
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 module.exports = server;

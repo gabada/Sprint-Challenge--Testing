@@ -52,6 +52,24 @@ describe('server.js', () => {
       expect(response.status).toBe(201);
       expect(response.status).not.toBe(422);
     });
+    describe('Check Uniqueness', () => {
+      beforeEach(async () => {
+        await db('vgames').insert({
+          title: 'Tetris',
+          genre: 'Puzzle',
+          releaseYear: 1984
+        });
+      });
+      it('if not unique game title return 405', async () => {
+        const game = { title: 'Tetris', genre: 'Puzzle', releaseYear: 1984 };
+        const response = await request(server)
+          .post('/games')
+          .send(game);
+        expect(response.status).toBe(405);
+        expect(response.status).not.toBe(201);
+        expect(response.status).not.toBe(500);
+      });
+    });
   });
   describe('GET /', () => {
     it('should respond with 200OK', async () => {
@@ -74,6 +92,49 @@ describe('server.js', () => {
         expect(response.body).toHaveLength(0);
         expect(response.body).not.toBeNull();
       });
+    });
+    describe('GET BY ID', async () => {
+      beforeEach(async () => {
+        await db('vgames').truncate();
+        await db('vgames').insert({
+          title: 'Tetris',
+          genre: 'Puzzle',
+          releaseYear: 1984
+        });
+      });
+      it('should return game with ID 1', async () => {
+        const response = await request(server).get('/games/1');
+        expect(response.body).toHaveProperty('genre');
+        expect(response.status).toBe(200);
+      });
+      it('should return 404 if game with ID not found', async () => {
+        const response = await request(server).get('/games/100');
+        expect(response.body).not.toHaveProperty('title');
+        expect(response.body).not.toHaveProperty('genre');
+        expect(response.status).toBe(404);
+      });
+    });
+  });
+  describe('DELETE /', async () => {
+    beforeEach(async () => {
+      await db('vgames').truncate();
+      await db('vgames').insert({
+        title: 'Tetris',
+        genre: 'Puzzle',
+        releaseYear: 1984
+      });
+    });
+    it('endpoint should exist', async () => {
+      const response = await request(server).delete('/games/1');
+      expect(response.status).not.toBe(404);
+    });
+    it('should return 204', async () => {
+      const response = await request(server).delete('/games/1');
+      expect(response.status).toBe(204);
+    });
+    it('should return 404 if game with ID not found', async () => {
+      const response = await request(server).delete('/games/100');
+      expect(response.status).toBe(404);
     });
   });
 });

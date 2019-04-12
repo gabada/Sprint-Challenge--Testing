@@ -2,7 +2,6 @@ const db = require('../data/dbConfig.js');
 
 module.exports = {
   insert,
-  update,
   remove,
   getAll,
   findById
@@ -15,10 +14,6 @@ async function insert(game) {
     .first();
 }
 
-async function update(id, changes) {
-  return null;
-}
-
 function remove(id) {
   return db('vgames')
     .where({ id })
@@ -29,6 +24,9 @@ function getAll() {
   return db('vgames');
 }
 
-function findById(id) {
-  return null;
+async function findById(id) {
+  const game = await db('vgames')
+    .where({ id: id })
+    .first();
+  return game;
 }
