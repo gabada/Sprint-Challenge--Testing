@@ -7,6 +7,8 @@ describe('server.js', () => {
     it('should respond with 200OK', async () => {
       const response = await request(server).get('/games');
       expect(response.status).toBe(200);
+      expect(response.status).not.toBe(500);
+      expect(response.status).not.toBeNull();
     });
     describe('Check Array', () => {
       it('should return an array', async () => {
@@ -20,6 +22,7 @@ describe('server.js', () => {
         const response = await request(server).get('/games');
         expect(Array.isArray(response.body)).toBe(true);
         expect(response.body).toHaveLength(0);
+        expect(response.body).not.toBeNull();
       });
     });
   });
