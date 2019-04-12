@@ -14,4 +14,17 @@ server.get('/games', async (req, res) => {
   }
 });
 
+server.post('/games', async (req, res) => {
+  const { title, genre } = req.body;
+  if (!title || !genre) {
+    return res.status(422).json({ error: 'Missing title or genre' });
+  } else
+    try {
+      const game = await Games.insert(req.body);
+      res.status(201).json(game);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+});
+
 module.exports = server;
